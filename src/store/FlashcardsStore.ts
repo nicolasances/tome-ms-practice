@@ -25,4 +25,17 @@ export class FlashcardsStore {
 
     }
 
+    /**
+     * Deletes all flashcards related to the specified practice
+     * 
+     * @param practiceId the practice
+     * @returns the deleted count
+     */
+    async deletePracticeFlashcards(practiceId: string): Promise<number> {
+
+        const result = await this.db.collection(this.fcCollection).deleteMany({ practiceId: practiceId });
+
+        return result.deletedCount;
+    }
+
 }

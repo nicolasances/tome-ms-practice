@@ -1,4 +1,4 @@
-import { Db } from "mongodb";
+import { Db, ObjectId } from "mongodb";
 import { ControllerConfig } from "../Config";
 import { Practice } from "../model/Practice";
 
@@ -24,6 +24,33 @@ export class PracticeStore {
 
         return result.insertedId.toHexString();
 
+    }
+
+    /**
+     * Finds a specific practice
+     * 
+     * @param practiceId the id
+     * @returns the found practice
+     */
+    async findPractice(practiceId: string): Promise<Practice> {
+
+        const practice = await this.db.collection(this.practiceCollection).findOne({ _id: new ObjectId(practiceId) })
+
+        return Practice.fromBSON(practice);
+
+    }
+
+    /**
+     * Deletes a specific practice
+     * 
+     * @param practiceId the id
+     * @returns the count
+     */
+    async deletePractice(practiceId: string): Promise<number> {
+
+        const result = await this.db.collection(this.practiceCollection).deleteOne({ _id: new ObjectId(practiceId) })
+
+        return result.deletedCount;
     }
 
     /**
