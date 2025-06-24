@@ -41,6 +41,23 @@ export class PracticeStore {
     }
 
     /**
+     * Updates a specific practice
+     * 
+     * @param practice the practice to update
+     * @returns the count of updated practices
+     */
+    async updatePractice(practice: Practice): Promise<number> {
+
+        const result = await this.db.collection(this.practiceCollection).updateOne(
+            { _id: new ObjectId(practice.id) },
+            { $set: practice.toBSON() }
+        );
+
+        return result.modifiedCount;
+    }
+
+
+    /**
      * Deletes a specific practice
      * 
      * @param practiceId the id

@@ -2,6 +2,7 @@ import { Request } from "express";
 import moment from "moment-timezone";
 import { WithId } from "mongodb";
 import { ValidationError } from "toto-api-controller";
+import { PracticeFlashcard } from "./PracticeFlashcard";
 
 export class Practice {
 
@@ -31,6 +32,20 @@ export class Practice {
         if (id) {
             this.id = id;
         }
+    }
+
+    /**
+     * Closes the practice, setting the finishedOn date and the score.
+     * 
+     * @param flashcards all the flashcards that were answered during the practice
+     */
+    closePractice(flashcards: PracticeFlashcard[]) {
+
+        this.finishedOn = moment().tz("Europe/Rome").format("YYYYMMDD");
+
+        const correctAnswers = flashcards.filter(fc => fc.correctlyAsnwerAt).length;
+        this.score = Math.round((correctAnswers / flashcards.length) * 100);
+
     }
 
     toBSON() {

@@ -1,4 +1,6 @@
+import moment from "moment-timezone";
 import { Flashcard } from "../api/FlashcardsAPI";
+import { WithId } from "mongodb";
 
 export class PracticeFlashcard {
     
@@ -23,6 +25,17 @@ export class PracticeFlashcard {
         this.id = id;
     }
 
+    static fromBSON(bson: WithId<any>): PracticeFlashcard {
+        
+        return new PracticeFlashcard(
+            bson.practiceId,
+            bson.originalFlashcard,
+            bson.numWrongAnswers,
+            bson.correctlyAsnwerAt,
+            bson._id.toHexString()
+        );
+    }
+
     /**
      * Constructs a flashcard copying all the base fields from the flashcard downloaded from the API 
      * 
@@ -31,6 +44,26 @@ export class PracticeFlashcard {
     static fromFlashcardAPI(fc: Flashcard, practiceId: string): PracticeFlashcard {
 
         return new PracticeFlashcard(practiceId, fc);
+
+    }
+
+    /**
+     * Records the answer to the flashcard and updates it accordingly.
+     * 
+     * @param selectedAnswerIndex the index of the answer selected by the user
+     * @returns true if the answer is correct, false otherwise
+     */
+    answer(selectedAnswerIndex: number) {
+
+        if (selectedAnswerIndex == this.originalFlashcard.rightAnswerIndex) {
+            this.correctlyAsnwerAt = moment().tz("Europe/Rome").format("YYYYMMDD HH:mm");
+            return true;
+        }
+
+        if (!this.numWrongAnswers) this.numWrongAnswers = 0;
+
+        this.numWrongAnswers++;
+        return false;
 
     }
 
