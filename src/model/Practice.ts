@@ -44,6 +44,18 @@ export class Practice {
         };
     }
 
+    toJSON() {
+        return {
+            id: this.id, 
+            topicId: this.topicId,
+            user: this.user,
+            type: this.type,
+            startedOn: this.startedOn,
+            finishedOn: this.finishedOn,
+            score: this.score
+        };
+    }
+
     static fromRequest(req: Request, user: string): Practice {
 
         const body = req.body;
