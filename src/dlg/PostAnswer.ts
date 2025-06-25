@@ -89,12 +89,17 @@ export class PostAnswer implements TotoDelegate {
                 // TODO Publish an event on PubSub
 
                 return {
-                    finished: true
+                    isCorrect: isCorrect,
+                    finished: true, 
+                    score: practice.score
                 }
             }
 
             // Return result 
-            return { isCorrect: isCorrect, finished: false }
+            return { 
+                isCorrect: isCorrect, 
+                finished: false, 
+            }
 
         } catch (error) {
 
