@@ -41,7 +41,7 @@ export class PostPractice implements TotoDelegate {
             // 0. Check that there is no unfinished practice first
             const ongoingPractice = await practiceStore.findUnfinishedPractice(topicId);
 
-            if (ongoingPractice) throw new ValidationError(400, `Ongoing practice found: [ ${ongoingPractice.id} ] on topic ${topicId}. Close that one first.`)
+            if (ongoingPractice) throw new ValidationError(400, `Ongoing practice found: [ ${ongoingPractice.id} ] on topic ${topicId}. Close that one first.`, 'ongoing-practice-found')
 
             // 0. Create the Practice
             const practice = Practice.fromRequest(req, user);
