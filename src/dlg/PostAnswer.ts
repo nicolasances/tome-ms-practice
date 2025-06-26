@@ -3,6 +3,7 @@ import { ExecutionContext, TotoDelegate, TotoRuntimeError, UserContext, Validati
 import { ControllerConfig } from "../Config";
 import { PracticeStore } from "../store/PraticeStore";
 import { FlashcardsStore } from "../store/FlashcardsStore";
+import { computePracticeScore, computePracticeStatistics } from "../util/PracticeUtils";
 
 /**
  * Post and answer to a flashcard.
@@ -60,7 +61,10 @@ export class PostAnswer implements TotoDelegate {
             // Save the updated flashcard
             const modifiedCount = await flashcardStore.updateFlashcard(card);
 
-            logger.compute(cid, `Flashcard ${flashcardId} ${modifiedCount > 0 ? "updated" : "NOT UPDATED!"}`, "info");
+            if (modifiedCount == 0) {
+                logger.compute(cid, `Flashcard ${flashcardId} ${modifiedCount > 0 ? "updated" : "NOT UPDATED!"}`, "info");
+                throw new TotoRuntimeError(500, `Flashcard ${flashcardId} was not updated after answering`); 
+            }
 
             // Check if the Practice is finished
             const finished = await flashcardStore.countUnansweredFlashcards(practiceId) == 0;
@@ -78,8 +82,14 @@ export class PostAnswer implements TotoDelegate {
                 // Get all the flashcards for the practice
                 const flashcards = await flashcardStore.getPracticeFlashcards(practiceId);
 
+                // Compute the Score
+                const score = computePracticeScore(flashcards)
+
+                // Compute the Practice Statistics
+                const stats = computePracticeStatistics(flashcards);
+
                 // Close the practice and Compute the score
-                practice.closePractice(flashcards);
+                practice.closePractice(score, stats);
 
                 // Update the practice in the DB
                 await practiceStore.updatePractice(practice);
@@ -91,7 +101,8 @@ export class PostAnswer implements TotoDelegate {
                 return {
                     isCorrect: isCorrect,
                     finished: true, 
-                    score: practice.score
+                    score: practice.score, 
+                    stats: practice.stats
                 }
             }
 

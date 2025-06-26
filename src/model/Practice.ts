@@ -13,6 +13,7 @@ export class Practice {
     startedOn: string; // YYYYMMDD
     finishedOn?: string; // YYYYMMDD
     score?: number; // Percentage
+    stats?: PracticeStats; 
 
     constructor(
         topicId: string,
@@ -21,6 +22,7 @@ export class Practice {
         startedOn: string,
         finishedOn?: string,
         score?: number,
+        stats?: PracticeStats,
         id?: string
     ) {
         this.topicId = topicId;
@@ -29,22 +31,23 @@ export class Practice {
         this.startedOn = startedOn;
         this.finishedOn = finishedOn;
         this.score = score;
+        this.stats = stats;
         if (id) {
             this.id = id;
         }
     }
 
     /**
-     * Closes the practice, setting the finishedOn date and the score.
+     * Closes the Practice
      * 
-     * @param flashcards all the flashcards that were answered during the practice
+     * @param score the calculated score
+     * @param stats the stats the computed statistics
      */
-    closePractice(flashcards: PracticeFlashcard[]) {
+    closePractice(score: number, stats: PracticeStats) {
 
         this.finishedOn = moment().tz("Europe/Rome").format("YYYYMMDD");
-
-        const correctAnswers = flashcards.filter(fc => fc.correctlyAsnwerAt).length;
-        this.score = Math.round((correctAnswers / flashcards.length) * 100);
+        this.score = score; 
+        this.stats = stats;
 
     }
 
@@ -102,6 +105,14 @@ export class Practice {
         );
     }
 
+}
+
+export interface PracticeStats {
+
+    averageAttempts: number;    // The average number of attempts before getting the answer right
+    totalWrongAnswers: number;  // The absolute total number of wrong answers (if a users gets it 2 times wrong on a question before getting the right answer, the number of wrong answers for that question is 2 and gets summed to this total)
+    numCards: number;           // The total number of flashcards
+    
 }
 
 export type PracticeType = "options" | "gaps"
