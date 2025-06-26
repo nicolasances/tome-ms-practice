@@ -41,6 +41,25 @@ export class PracticeStore {
     }
 
     /**
+     * Finds all practices for a given topic
+     * 
+     * @param topicId the topic id to search for practices
+     * @returns a list of practices for the given topic
+     */
+    async findPracticesByTopic(topicId: string, onlyFinished: boolean = false): Promise<Practice[]> {
+
+        const filter: any = {
+            topicId: topicId
+        }
+
+        if (onlyFinished) filter['finishedOn'] = { $exists: true, $ne: null };
+        
+        const practices = await this.db.collection(this.practiceCollection).find(filter).toArray();
+
+        return practices.map(practice => Practice.fromBSON(practice));
+    }
+
+    /**
      * Updates a specific practice
      * 
      * @param practice the practice to update
@@ -89,6 +108,27 @@ export class PracticeStore {
         if (!doc) return null;
 
         return Practice.fromBSON(doc)
+    }
+
+    /**
+     * Finds and returns the last finished practice for a given topic
+     * 
+     * @param topicId the topic id to search for
+     * @returns the latest finished practice for the given topic, or null if none exists
+     */
+    async findLastFinishedPractice(topicId: string): Promise<Practice | null> {
+
+        const doc = await this.db.collection(this.practiceCollection).findOne({
+            topicId,
+            $and: [
+                {finishedOn: { $exists: true }}, 
+                {finishedOn: { $ne: null }}
+            ]
+        }, { sort: { finishedOn: -1 } });
+
+        if (!doc) return null;
+
+        return Practice.fromBSON(doc);
     }
 
 }
