@@ -59,7 +59,7 @@ export class Practice {
             startedOn: this.startedOn,
             finishedOn: this.finishedOn,
             score: this.score,
-            stats: this.state
+            stats: this.stats
         };
     }
 
