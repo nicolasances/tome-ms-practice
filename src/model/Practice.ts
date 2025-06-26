@@ -58,7 +58,8 @@ export class Practice {
             type: this.type,
             startedOn: this.startedOn,
             finishedOn: this.finishedOn,
-            score: this.score
+            score: this.score,
+            stats: this.state
         };
     }
 
@@ -70,7 +71,8 @@ export class Practice {
             type: this.type,
             startedOn: this.startedOn,
             finishedOn: this.finishedOn,
-            score: this.score
+            score: this.score,
+            stats: this.stats
         };
     }
 
@@ -101,6 +103,7 @@ export class Practice {
             bson.startedOn,
             bson.finishedOn,
             bson.score,
+            bson.stats,
             bson._id?.toString()
         );
     }
