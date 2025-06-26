@@ -14,7 +14,7 @@ export function computePracticeScore(flashcards: PracticeFlashcard[]): number {
 
     const questionsWithWrongAnswers = flashcards.filter(fc => fc.numWrongAnswers && fc.numWrongAnswers > 0).length;
 
-    return (questionsWithWrongAnswers / flashcards.length) * 100;
+    return ((flashcards.length - questionsWithWrongAnswers) / flashcards.length) * 100;
 
 }
 
