@@ -1,6 +1,7 @@
 import { Db, ObjectId } from "mongodb";
 import { ControllerConfig } from "../Config";
 import { Practice } from "../model/Practice";
+import { query } from "express";
 
 export class PracticeStore {
 
@@ -39,6 +40,16 @@ export class PracticeStore {
         return Practice.fromBSON(practice);
 
     }
+
+    async findPractices(filters: {startedFrom?: string}): Promise<Practice[]> {
+
+        let queryFilters: any = {};
+        if (filters.startedFrom) queryFilters['startedOn'] = { $gte: filters.startedFrom };
+
+        const practices = await this.db.collection(this.practiceCollection).find(queryFilters).toArray();
+
+        return practices.map(practice => Practice.fromBSON(practice));
+    }   
 
     /**
      * Finds all practices for a given topic
