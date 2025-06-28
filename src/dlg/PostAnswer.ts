@@ -4,6 +4,7 @@ import { ControllerConfig } from "../Config";
 import { PracticeStore } from "../store/PraticeStore";
 import { FlashcardsStore } from "../store/FlashcardsStore";
 import { computePracticeScore, computePracticeStatistics } from "../util/PracticeUtils";
+import { EventPublisher, EVENTS } from "../evt/EventPublisher";
 
 /**
  * Post and answer to a flashcard.
@@ -97,6 +98,7 @@ export class PostAnswer implements TotoDelegate {
                 logger.compute(cid, `Practice ${practiceId} closed at ${practice.finishedOn} with score ${practice.score}`, "info");
 
                 // TODO Publish an event on PubSub
+                await new EventPublisher(execContext, "tomepractices").publishEvent(practice.id!, EVENTS.practiceFinished, `Practice ${practice.id} has finished`, practice)
 
                 return {
                     isCorrect: isCorrect,
