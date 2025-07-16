@@ -33,6 +33,7 @@ export class GetPractices implements TotoDelegate {
             // Find all the historical practices for the given topic
             const practices = await new PracticeStore(db, config).findPractices({
                 startedFrom: req.query.startedFrom ? String(req.query.startedFrom) : undefined,
+                finishedFrom: req.query.finishedFrom ? String(req.query.finishedFrom) : undefined,
             })
 
             return {
