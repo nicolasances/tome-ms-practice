@@ -37,10 +37,11 @@ export class FlashcardsAPI {
     }
 }
 
+type Flashcard = MultipleOptionsFlashcard | SectionTimelineFlashcard;
+
 export interface GetFlashcardsResponse {
 
-    sectionTimelineFlascards: SectionTimelineFlashcard[];
-    multipleOptionsFlashcards: MultipleOptionsFlashcard[];
+    flashcards: Flashcard[];
 
 }
 
