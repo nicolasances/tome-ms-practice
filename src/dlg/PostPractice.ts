@@ -47,13 +47,15 @@ export class PostPractice implements TotoDelegate {
             const practice = Practice.fromRequest(req, user);
 
             // 1. Get the flashcards for the Topic and for the selected practice type 
-            const { flashcards } = await new FlashcardsAPI(execContext, String(req.headers['authorization'] ?? req.headers['Authorization'])).getFlashcards(topicId);
+            const { sectionTimelineFlascards, multipleOptionsFlashcards } = await new FlashcardsAPI(execContext, String(req.headers['authorization'] ?? req.headers['Authorization'])).getFlashcards(topicId);
 
             // 2. Save the practice
             const practiceId = await practiceStore.savePractice(practice);
 
             // 3. Save the flashcards
-            const fcInsertedCount = await new FlashcardsStore(db, config).saveFlashcards(flashcards.map(fc => PracticeFlashcard.fromFlashcardAPI(fc, practiceId)))
+            const flashcards = [sectionTimelineFlascards.map(fc => PracticeFlashcard.fromFlashcardAPI(fc, practiceId)), multipleOptionsFlashcards.map(fc => PracticeFlashcard.fromFlashcardAPI(fc, practiceId))].flat();
+
+            const fcInsertedCount = await new FlashcardsStore(db, config).saveFlashcards(flashcards)
 
             logger.compute(cid, `Saved new practice [${practiceId}] (type "${body.type}") and created [${fcInsertedCount}] flashcards for topic [${topicId}]`)
 

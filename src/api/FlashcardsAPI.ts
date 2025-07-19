@@ -39,11 +39,12 @@ export class FlashcardsAPI {
 
 export interface GetFlashcardsResponse {
 
-    flashcards: Flashcard[]
+    sectionTimelineFlascards: SectionTimelineFlashcard[];
+    multipleOptionsFlashcards: MultipleOptionsFlashcard[];
 
 }
 
-export interface Flashcard {
+export interface MultipleOptionsFlashcard {
 
     type: string;
     user: string;
@@ -53,4 +54,23 @@ export interface Flashcard {
     options: string[];
     rightAnswerIndex: number; 
     id?: string;
+}
+export interface SectionTimelineFlashcard {
+    id?: string;
+    type: string;
+    user: string;
+    topicId: string;
+    topicCode: string;
+    sectionTitle: string; 
+    events: SectionTimelineEvent[]; 
+}
+
+export interface SectionTimelineEvent {
+
+    event: string;
+    date: string; 
+    dateFormat: string;
+    real: boolean;
+    order: number;
+
 }
