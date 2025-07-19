@@ -1,6 +1,8 @@
 import moment from "moment-timezone";
-import { Flashcard } from "../api/FlashcardsAPI";
+import { MultipleOptionsFlashcard, SectionTimelineFlashcard } from "../api/FlashcardsAPI";
 import { WithId } from "mongodb";
+
+type Flashcard = MultipleOptionsFlashcard | SectionTimelineFlashcard;
 
 export class PracticeFlashcard {
     
@@ -55,9 +57,11 @@ export class PracticeFlashcard {
      */
     answer(selectedAnswerIndex: number) {
 
-        if (selectedAnswerIndex == this.originalFlashcard.rightAnswerIndex) {
-            this.correctlyAsnwerAt = moment().tz("Europe/Rome").format("YYYYMMDD HH:mm");
-            return true;
+        if (this.originalFlashcard.type == 'options') {
+            if (selectedAnswerIndex == (this.originalFlashcard as MultipleOptionsFlashcard).rightAnswerIndex) {
+                this.correctlyAsnwerAt = moment().tz("Europe/Rome").format("YYYYMMDD HH:mm");
+                return true;
+            }
         }
 
         if (!this.numWrongAnswers) this.numWrongAnswers = 0;
