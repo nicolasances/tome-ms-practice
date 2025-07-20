@@ -5,9 +5,9 @@ import { WithId } from "mongodb";
 type Flashcard = MultipleOptionsFlashcard | SectionTimelineFlashcard;
 
 export class PracticeFlashcard {
-    
+
     practiceId: string; // Relates to a Practice
-    originalFlashcard: Flashcard;  
+    originalFlashcard: Flashcard;
 
     numWrongAnswers?: number;    // number of wrong answers from the user before getting the right one
     correctlyAsnwerAt?: string;  // YYYYMMDD HH:mm
@@ -28,7 +28,7 @@ export class PracticeFlashcard {
     }
 
     static fromBSON(bson: WithId<any>): PracticeFlashcard {
-        
+
         return new PracticeFlashcard(
             bson.practiceId,
             bson.originalFlashcard,
@@ -51,17 +51,12 @@ export class PracticeFlashcard {
 
     /**
      * Records the answer to the flashcard and updates it accordingly.
-     * 
-     * @param selectedAnswerIndex the index of the answer selected by the user
-     * @returns true if the answer is correct, false otherwise
      */
-    answer(selectedAnswerIndex: number) {
+    answer(isCorrect: boolean) {
 
-        if (this.originalFlashcard.type == 'options') {
-            if (selectedAnswerIndex == (this.originalFlashcard as MultipleOptionsFlashcard).rightAnswerIndex) {
-                this.correctlyAsnwerAt = moment().tz("Europe/Rome").format("YYYYMMDD HH:mm");
-                return true;
-            }
+        if (isCorrect) {
+            this.correctlyAsnwerAt = moment().tz("Europe/Rome").format("YYYYMMDD HH:mm");
+            return true;
         }
 
         if (!this.numWrongAnswers) this.numWrongAnswers = 0;

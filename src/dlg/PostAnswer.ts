@@ -28,7 +28,7 @@ export class PostAnswer implements TotoDelegate {
         // Validate mandatory fields
         if (!req.params.practiceId) throw new ValidationError(400, "No practiceId provided");
         if (!req.params.flashcardId) throw new ValidationError(400, "No flashcardId provided");
-        if (body.selectedAnswerIndex == null) throw new ValidationError(400, "No selectedAnswerIndex provided");
+        if (body.isCorrect == null) throw new ValidationError(400, "No isCorrect provided");
 
         const practiceId = String(req.params.practiceId);
         const flashcardId = String(req.params.flashcardId);
@@ -55,9 +55,10 @@ export class PostAnswer implements TotoDelegate {
             if (card.correctlyAsnwerAt != null) throw new ValidationError(400, `Flashcard ${flashcardId} already answered`);
 
             // Update the flashcard with the answer
-            const isCorrect = card.answer(body.selectedAnswerIndex);
+            let isCorrect = body.isCorrect;
+            card.answer(body.isCorrect);
 
-            logger.compute(cid, `Flashcard ${flashcardId} answered with index ${body.selectedAnswerIndex}. Is Correct: ${isCorrect}`, "info");
+            logger.compute(cid, `Flashcard ${flashcardId} answered. Is Correct: ${isCorrect}`, "info");
 
             // Save the updated flashcard
             const modifiedCount = await flashcardStore.updateFlashcard(card);
