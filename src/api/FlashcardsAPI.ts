@@ -55,6 +55,7 @@ export interface MultipleOptionsFlashcard {
     options: string[];
     rightAnswerIndex: number; 
     id?: string;
+    sectionShortTitle: string;
 }
 export interface SectionTimelineFlashcard {
     id?: string;
@@ -63,6 +64,7 @@ export interface SectionTimelineFlashcard {
     topicId: string;
     topicCode: string;
     sectionTitle: string; 
+    sectionShortTitle: string;
     events: SectionTimelineEvent[]; 
 }
 
