@@ -123,6 +123,21 @@ export class PracticeStore {
     }
 
     /**
+     * Finds all unfinished practices across all topics
+     */
+    async findAllUnfinishedPractices(): Promise<Practice[]> {
+
+        const docs = await this.db.collection(this.practiceCollection).find({
+            $or: [
+                { finishedOn: null },
+                { finishedOn: { $exists: false } }
+            ]
+        }).toArray();
+
+        return docs.map(doc => Practice.fromBSON(doc));
+    }
+
+    /**
      * Finds and returns the last finished practice for a given topic
      * 
      * @param topicId the topic id to search for
