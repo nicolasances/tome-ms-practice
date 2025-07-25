@@ -28,7 +28,7 @@ export class GetOngoingPractices implements TotoDelegate {
 
                 return { practices: [practice.toJSON()] }
             }
-            else return { practices: await new PracticeStore(db, config).findAllUnfinishedPractices(); }
+            else return { practices: await new PracticeStore(db, config).findAllUnfinishedPractices() }
 
         } catch (error) {
 
