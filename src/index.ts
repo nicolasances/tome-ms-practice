@@ -8,11 +8,13 @@ import { GetPracticeFlashcards } from "./dlg/GetPracticeFlashcards";
 import { GetHistoricalPractices } from "./dlg/GetHistoricalPractices";
 import { GetLastFinishedPractice } from "./dlg/GetLastFinishedPractice";
 import { GetPractices } from "./dlg/GetPractices";
+import { GetPractice } from "./dlg/GetPractice";
 
 const api = new TotoAPIController("tome-ms-practice", new ControllerConfig())
 
 api.path('POST', '/practices', new PostPractice());
 api.path('GET', '/practices', new GetPractices());
+api.path('GET', '/practices/:practiceId', new GetPractice());
 api.path('DELETE', '/practices/:practiceId', new DeletePractice());
 api.path('GET', '/practices/ongoing', new GetOngoingPractices());
 
