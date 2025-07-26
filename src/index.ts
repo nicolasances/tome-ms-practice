@@ -14,9 +14,9 @@ const api = new TotoAPIController("tome-ms-practice", new ControllerConfig())
 
 api.path('POST', '/practices', new PostPractice());
 api.path('GET', '/practices', new GetPractices());
+api.path('GET', '/practices/ongoing', new GetOngoingPractices());
 api.path('GET', '/practices/:practiceId', new GetPractice());
 api.path('DELETE', '/practices/:practiceId', new DeletePractice());
-api.path('GET', '/practices/ongoing', new GetOngoingPractices());
 
 api.path('GET', '/topics/:topicId/practices', new GetHistoricalPractices());
 api.path('GET', '/topics/:topicId/practices/latestFinished', new GetLastFinishedPractice());
