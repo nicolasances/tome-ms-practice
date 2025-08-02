@@ -40,6 +40,27 @@ export class FlashcardsStore {
     }
 
     /**
+     * Update the answer of the flashcard. 
+     * This happens ONLY if the flashcard was not answered positively yet.
+     */
+    async updateFlashcardWithAnswer(flashcard: PracticeFlashcard): Promise<number> {
+
+        const result = await this.db.collection(this.fcCollection).updateOne(
+            {
+                _id: new ObjectId(flashcard.id),
+                $or: [
+                    { correctlyAsnwerAt: { $exists: false } },
+                    { correctlyAsnwerAt: null }
+                ]
+            },
+            { $set: flashcard.toBSON() }
+        );
+
+        return result.modifiedCount;
+
+    }
+
+    /**
      * Counts the number of unanswered flashcards for a given practice
      * 
      * @param practiceId the practiceId to count the unanswered flashcards
