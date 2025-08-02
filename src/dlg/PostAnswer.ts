@@ -61,7 +61,7 @@ export class PostAnswer implements TotoDelegate {
             logger.compute(cid, `Flashcard ${flashcardId} answered. Is Correct: ${isCorrect}`, "info");
 
             // Save the updated flashcard
-            const modifiedCount = await flashcardStore.updateFlashcardWithAnswer(card);
+            const modifiedCount = await flashcardStore.updateFlashcardWithAnswer(card.id!, isCorrect ? undefined : card.numWrongAnswers, card.correctlyAsnwerAt);
 
             if (modifiedCount == 0) {
                 logger.compute(cid, `Flashcard ${flashcardId} ${modifiedCount > 0 ? "updated" : "NOT UPDATED!"}`, "info");

@@ -43,17 +43,19 @@ export class FlashcardsStore {
      * Update the answer of the flashcard. 
      * This happens ONLY if the flashcard was not answered positively yet.
      */
-    async updateFlashcardWithAnswer(flashcard: PracticeFlashcard): Promise<number> {
+    async updateFlashcardWithAnswer(flashcardId: string, numWrongAnswers?: number, correctlyAsnwerAt?: string): Promise<number> {
+
+        let updateFields: any = {};
+        if (numWrongAnswers) {
+            updateFields.numWrongAnswers = numWrongAnswers;
+        }
+        if (correctlyAsnwerAt) {
+            updateFields.correctlyAsnwerAt = correctlyAsnwerAt;
+        }
 
         const result = await this.db.collection(this.fcCollection).updateOne(
-            {
-                _id: new ObjectId(flashcard.id),
-                $or: [
-                    { correctlyAsnwerAt: { $exists: false } },
-                    { correctlyAsnwerAt: null }
-                ]
-            },
-            { $set: flashcard.toBSON() }
+            { _id: new ObjectId(flashcardId), },
+            { $set: { ...updateFields } }
         );
 
         return result.modifiedCount;
