@@ -12,7 +12,14 @@ export function computePracticeScore(flashcards: PracticeFlashcard[]): number {
 
     if (flashcards.length === 0) return 0;
 
-    const questionsWithWrongAnswers = flashcards.filter(fc => fc.numWrongAnswers && fc.numWrongAnswers > 0).length;
+    const countWongAnswers = (cards: PracticeFlashcard[]): number => {
+        let count = 0;
+        cards.forEach(fc => {
+            if (fc.originalFlashcard.type === 'graph') count += fc.numWrongAnswers || 0;
+            else if (fc.numWrongAnswers && fc.numWrongAnswers > 0) count++;
+        });
+        return count;
+    }
 
     // Compute the total number of questions. This has to be done because graphs are a single flashcard, but they have multiple questions.
     const countQuestions = (fc: PracticeFlashcard): number => {
@@ -36,14 +43,15 @@ export function computePracticeScore(flashcards: PracticeFlashcard[]): number {
 
             return count;
         }
-        
+
         return 1;
     }
     const totalQuestions = flashcards.reduce((sum, fc) => sum + (countQuestions(fc)), 0);
+    const questionsWithWrongAnswers = countWongAnswers(flashcards);
 
     if (totalQuestions - questionsWithWrongAnswers <= 0) return 0;
 
-    return ((totalQuestions - questionsWithWrongAnswers) / totalQuestions) * 100;
+    return Math.round(((totalQuestions - questionsWithWrongAnswers) / totalQuestions) * 100);
 
 }
 
