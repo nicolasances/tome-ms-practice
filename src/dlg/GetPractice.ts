@@ -4,22 +4,18 @@ import { ControllerConfig } from "../Config";
 import { PracticeStore } from "../store/PraticeStore";
 
 
-export class GetOngoingPractice implements TotoDelegate {
+/**
+ * Retrieves all the practices, with some filtering options.
+ */
+export class GetPractice implements TotoDelegate {
 
     async do(req: Request, userContext: UserContext, execContext: ExecutionContext): Promise<any> {
 
-        const body = req.body
         const logger = execContext.logger;
         const cid = execContext.cid;
         const config = execContext.config as ControllerConfig;
 
-        // Validate mandatory fields
-        if (!req.query.topicId) throw new ValidationError(400, "No topicId provided")
-
-        // Extract user
-        const user = userContext.email;
-
-        const topicId = String(req.query.topicId);
+        const practiceId = String(req.params.practiceId);
 
         let client;
 
@@ -29,13 +25,10 @@ export class GetOngoingPractice implements TotoDelegate {
             client = await config.getMongoClient();
             const db = client.db(config.getDBName());
 
-            // Retrieve the practice for the specified topic 
-            const practice = await new PracticeStore(db, config).findUnfinishedPractice(topicId);
+            // Find all the historical practices for the given topic
+            const practice = await new PracticeStore(db, config).findPractice(practiceId);
 
-            if (!practice) return {}
-
-            return practice.toJSON()
-
+            return practice.toJSON();
 
         } catch (error) {
 

@@ -41,10 +41,11 @@ export class PracticeStore {
 
     }
 
-    async findPractices(filters: {startedFrom?: string}): Promise<Practice[]> {
+    async findPractices(filters: {startedFrom?: string, finishedFrom?: string}): Promise<Practice[]> {
 
         let queryFilters: any = {};
         if (filters.startedFrom) queryFilters['startedOn'] = { $gte: filters.startedFrom };
+        if (filters.finishedFrom) queryFilters['finishedOn'] = { $gte: filters.finishedFrom };
 
         const practices = await this.db.collection(this.practiceCollection).find(queryFilters).toArray();
 
@@ -119,6 +120,21 @@ export class PracticeStore {
         if (!doc) return null;
 
         return Practice.fromBSON(doc)
+    }
+
+    /**
+     * Finds all unfinished practices across all topics
+     */
+    async findAllUnfinishedPractices(): Promise<Practice[]> {
+
+        const docs = await this.db.collection(this.practiceCollection).find({
+            $or: [
+                { finishedOn: null },
+                { finishedOn: { $exists: false } }
+            ]
+        }).toArray();
+
+        return docs.map(doc => Practice.fromBSON(doc));
     }
 
     /**

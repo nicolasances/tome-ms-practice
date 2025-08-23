@@ -4,23 +4,13 @@ import { ControllerConfig } from "../Config";
 import { PracticeStore } from "../store/PraticeStore";
 
 
-/**
- * Retrieves all the practices, with some filtering options.
- */
-export class GetPractices implements TotoDelegate {
+export class GetOngoingPractices implements TotoDelegate {
 
     async do(req: Request, userContext: UserContext, execContext: ExecutionContext): Promise<any> {
 
-        const body = req.body
         const logger = execContext.logger;
         const cid = execContext.cid;
         const config = execContext.config as ControllerConfig;
-
-        // Extract user
-        const user = userContext.email;
-
-        const onlyFinished = req.query.finished === "true";
-        const topicId = String(req.params.topicId);
 
         let client;
 
@@ -30,16 +20,15 @@ export class GetPractices implements TotoDelegate {
             client = await config.getMongoClient();
             const db = client.db(config.getDBName());
 
-            // Find all the historical practices for the given topic
-            const practices = await new PracticeStore(db, config).findPractices({
-                startedFrom: req.query.startedFrom ? String(req.query.startedFrom) : undefined,
-                finishedFrom: req.query.finishedFrom ? String(req.query.finishedFrom) : undefined,
-            })
+            if (req.query.topicId) {
 
-            return {
-                practices: practices.map(practice => practice.toJSON()),
+                const practice = await new PracticeStore(db, config).findUnfinishedPractice(String(req.query.topicId));
+
+                if (!practice) return { practice: [] };
+
+                return { practices: [practice.toJSON()] }
             }
-
+            else return { practices: await new PracticeStore(db, config).findAllUnfinishedPractices() }
 
         } catch (error) {
 

@@ -12,9 +12,46 @@ export function computePracticeScore(flashcards: PracticeFlashcard[]): number {
 
     if (flashcards.length === 0) return 0;
 
-    const questionsWithWrongAnswers = flashcards.filter(fc => fc.numWrongAnswers && fc.numWrongAnswers > 0).length;
+    const countWongAnswers = (cards: PracticeFlashcard[]): number => {
+        let count = 0;
+        cards.forEach(fc => {
+            if (fc.originalFlashcard.type === 'graph') count += fc.numWrongAnswers || 0;
+            else if (fc.numWrongAnswers && fc.numWrongAnswers > 0) count++;
+        });
+        return count;
+    }
 
-    return ((flashcards.length - questionsWithWrongAnswers) / flashcards.length) * 100;
+    // Compute the total number of questions. This has to be done because graphs are a single flashcard, but they have multiple questions.
+    const countQuestions = (fc: PracticeFlashcard): number => {
+
+        if (fc.originalFlashcard.type === 'graph') {
+
+            // Traverse the graph, starting with firstEvent and then going through each nextEvent
+            let count = 0;
+
+            const traverseEventGraph = (event: any | null): void => {
+
+                if (!event) return;
+
+                count++;
+                if (event.date) count++;
+
+                traverseEventGraph(event.nextEvent);
+            };
+
+            traverseEventGraph((fc.originalFlashcard as any).graph.eventGraph.firstEvent);
+
+            return count;
+        }
+
+        return 1;
+    }
+    const totalQuestions = flashcards.reduce((sum, fc) => sum + (countQuestions(fc)), 0);
+    const questionsWithWrongAnswers = countWongAnswers(flashcards);
+
+    if (totalQuestions - questionsWithWrongAnswers <= 0) return 0;
+
+    return Math.round(((totalQuestions - questionsWithWrongAnswers) / totalQuestions) * 100);
 
 }
 

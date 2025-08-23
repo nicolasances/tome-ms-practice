@@ -37,13 +37,15 @@ export class FlashcardsAPI {
     }
 }
 
+type Flashcard = MultipleOptionsFlashcard | SectionTimelineFlashcard;
+
 export interface GetFlashcardsResponse {
 
-    flashcards: Flashcard[]
+    flashcards: Flashcard[];
 
 }
 
-export interface Flashcard {
+export interface MultipleOptionsFlashcard {
 
     type: string;
     user: string;
@@ -53,4 +55,25 @@ export interface Flashcard {
     options: string[];
     rightAnswerIndex: number; 
     id?: string;
+    sectionShortTitle: string;
+}
+export interface SectionTimelineFlashcard {
+    id?: string;
+    type: string;
+    user: string;
+    topicId: string;
+    topicCode: string;
+    sectionTitle: string; 
+    sectionShortTitle: string;
+    events: SectionTimelineEvent[]; 
+}
+
+export interface SectionTimelineEvent {
+
+    event: string;
+    date: string; 
+    dateFormat: string;
+    real: boolean;
+    order: number;
+
 }
