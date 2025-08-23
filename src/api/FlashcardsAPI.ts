@@ -46,15 +46,15 @@ export interface GetFlashcardsResponse {
 }
 
 export interface MultipleOptionsFlashcard {
-
+    
+    id?: string;
     type: string;
     user: string;
-    topicId: string; 
-    topicCode: string; 
-    question: string; 
+    topicId: string;
+    topicCode: string;
+    question: string;
     options: string[];
-    rightAnswerIndex: number; 
-    id?: string;
+    rightAnswerIndex: number;
     sectionShortTitle: string;
 }
 export interface SectionTimelineFlashcard {
@@ -63,15 +63,59 @@ export interface SectionTimelineFlashcard {
     user: string;
     topicId: string;
     topicCode: string;
-    sectionTitle: string; 
+    sectionTitle: string;
     sectionShortTitle: string;
-    events: SectionTimelineEvent[]; 
+    events: SectionTimelineEvent[];
 }
+
+export interface HistoricalGraphFlashcard {
+    id?: string | undefined;
+    type: string;
+    topicId: string;
+    topicCode: string;
+    sectionCode: string;
+    sectionIndex: number;   // 0-based index of the section in the topic to manage proper ordering
+    user: string;
+
+    sectionTitle: string;
+    sectionShortTitle: string;
+
+    // Fields specific to Historical Graphs
+    graph: {
+        summary: string;
+        eventGraph: {
+            firstEvent: EventNode;
+        };
+        facts: Fact[];
+    };
+
+}
+
+
+interface EventNode {
+    code: string; // Unique code for the event
+    event: string;
+    reason: string | null; // Reason for the event, if mentioned
+    date: string | null; // Date in a specific format
+    dateFormat: string | null; // e.g. "YYYY-MM-DD", "MM-DD", "DD-MM"
+    nextEvent: EventNode | null;
+    question: string;
+    answers: string[]; // Array of answers, only one is correct
+    correctAnswerIndex: number; // Index of the correct answer in the answers array
+    link?: "causal" | "chronological"; // Link type with the previous event in the graph, if applicable
+}
+
+interface Fact {
+    fact: string;
+    eventCode: string | null; // Code of the event this fact is connected to, or null if not related to any event
+    linkReason: string | null; // Reason for the link to the specified event, if applicable
+}
+
 
 export interface SectionTimelineEvent {
 
     event: string;
-    date: string; 
+    date: string;
     dateFormat: string;
     real: boolean;
     order: number;

@@ -5,6 +5,8 @@ import { PracticeStore } from "../store/PraticeStore";
 import { FlashcardsStore } from "../store/FlashcardsStore";
 import { computePracticeScore, computePracticeStatistics } from "../util/PracticeUtils";
 import { EventPublisher, EVENTS } from "../evt/EventPublisher";
+import { CardAnsweredEvent } from "../evt/model/CardAnsweredEvent";
+import { countQuestions } from "../util/FlashcardsUtils";
 
 /**
  * Post and answer to a flashcard.
@@ -67,6 +69,9 @@ export class PostAnswer implements TotoDelegate {
                 logger.compute(cid, `Flashcard ${flashcardId} ${modifiedCount > 0 ? "updated" : "NOT UPDATED!"}`, "info");
                 throw new TotoRuntimeError(500, `Flashcard ${flashcardId} was not updated after answering`); 
             }
+
+            // Publish an event for the answered card
+            await new EventPublisher(execContext, "tomepractices").publishEvent(practiceId, EVENTS.cardAnswered, `Card ${card.id} in practice ${practiceId} has been answered`, new CardAnsweredEvent(practiceId, card.originalFlashcard.id!, card.id!, isCorrect, countQuestions(card), card.originalFlashcard.type));
 
             // Check if the Practice is finished
             const finished = await flashcardStore.countUnansweredFlashcards(practiceId) == 0;

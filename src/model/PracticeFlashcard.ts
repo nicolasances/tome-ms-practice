@@ -1,8 +1,8 @@
 import moment from "moment-timezone";
-import { MultipleOptionsFlashcard, SectionTimelineFlashcard } from "../api/FlashcardsAPI";
+import { HistoricalGraphFlashcard, MultipleOptionsFlashcard, SectionTimelineFlashcard } from "../api/FlashcardsAPI";
 import { WithId } from "mongodb";
 
-type Flashcard = MultipleOptionsFlashcard | SectionTimelineFlashcard;
+type Flashcard = MultipleOptionsFlashcard | SectionTimelineFlashcard | HistoricalGraphFlashcard;
 
 export class PracticeFlashcard {
 

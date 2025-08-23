@@ -96,6 +96,9 @@ export const EVENTS = {
     // A practice has been finished
     practiceFinished: "practiceFinished",
 
+    // A card has been answered
+    cardAnswered: "cardAnswered"
+
 }
 
 class TopicWrapper {
